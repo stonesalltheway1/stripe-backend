@@ -1,44 +1,40 @@
-// ✅ Import required dependencies
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 const app = express();
+const PORT = process.env.PORT || 5000; // Fallback to 5000 if .env is missing
 
-// ✅ Enable CORS & JSON Parsing
+// Middleware
 app.use(cors());
-app.use(express.json()); // Ensures JSON body parsing
+app.use(bodyParser.json());
 
-// ✅ Test Route - Confirms Backend is Running
+// Root route to verify server is running
 app.get("/", (req, res) => {
-    res.send("🚀 AI Smart Replies Backend is Running!");
+    res.send(`<h2>🚀 AI Smart Replies Backend is Running!</h2>`);
 });
 
-// ✅ AI Reply Generation API Endpoint (POST method)
-app.post("/generate-reply", async (req, res) => {
+// AI Reply Generation Route
+app.post("/generate-reply", (req, res) => {
     try {
-        const { message, tone = "neutral", length = "medium", site = "default" } = req.body;
+        const { message, tone, length, site } = req.body;
 
         if (!message) {
-            return res.status(400).json({ error: "❌ Message is required." });
+            return res.status(400).json({ error: "Message is required" });
         }
 
-        // Placeholder AI Reply (Replace with real AI model later)
-        const aiResponse = `🤖 AI-generated reply to "${message}" with ${tone} tone & ${length} length.`;
+        // Simulate AI-generated reply (Replace this with actual AI logic)
+        const responseText = `Here is a ${tone || "neutral"} reply for "${site || "general"}": "${message}"`;
 
-        return res.json({ reply: aiResponse });
+        res.json({ reply: responseText });
     } catch (error) {
-        console.error("❌ Error in /generate-reply:", error);
+        console.error("Error processing request:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-// ✅ Catch-All Route (Fixes "Not Found" for Unknown Paths)
-app.all("*", (req, res) => {
-    res.status(404).json({ error: "❌ Route Not Found" });
-});
-
-// ✅ Start Server
-const PORT = process.env.PORT || 5000;
+// Ensure all routes are defined above this!
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
 });
