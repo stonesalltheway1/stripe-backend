@@ -37,3 +37,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
 });
+
+// ✅ Catch-All Route (Fixes "Not Found" for Unknown Paths)
+app.all("*", (req, res) => {
+    res.status(404).json({ error: "❌ Route Not Found" });
+});
